@@ -1,0 +1,106 @@
+Name: Workflow_97ff
+SchemaVersion: "1.0"
+
+# Optional - Set automatic triggers.
+Triggers:
+  - Type: Push
+    Branches:
+      - dev
+
+# Required - Define action configurations.
+Actions:
+  Build_34:
+    # Identifies the action. Do not modify this value.
+    Identifier: aws/build@v1.0.0
+
+    # Specifies the source and/or artifacts to pass to the action as input.
+    Inputs:
+      # Optional
+      Sources:
+        - WorkflowSource # This specifies that the action requires this Workflow as a source
+
+    Outputs:
+      # Optional; Automatically discover reports for popular test frameworks
+      AutoDiscoverReports:
+        Enabled: true
+        # Use as prefix for the report files
+        ReportNamePrefix: rpt
+
+    # Defines the action's properties.
+    Configuration:
+      # Required - Steps are sequential instructions that run shell commands
+      Steps:
+        - Run: echo "Hello, World!"
+        - Run: echo "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" >> report.xml
+        - Run: echo "<testsuite tests=\"1\" name=\"TestAgentJunit\" >" >> report.xml
+        - Run: echo "<testcase classname=\"TestAgentJunit\" name=\"Dummy
+            Test\"/></testsuite>" >> report.xml
+  Test_83:
+    # Identifies the action. Do not modify this value.
+    Identifier: aws/managed-test@v1.0.0
+    # Specifies the source and/or artifacts to pass to the action as input.
+    Inputs:
+      # Optional
+      Sources:
+        - WorkflowSource # This specifies that the action requires this Workflow as a source
+    Outputs:
+      # Optional; Automatically discover reports for popular test frameworks
+      AutoDiscoverReports:
+        Enabled: true
+        # Use as prefix for the report files
+        ReportNamePrefix: rpt
+    # Defines the action's properties.
+    Configuration:
+      # Required - Steps are sequential instructions that run shell commands
+      Steps:
+        # see info link in shell commands section for more details
+        - Run: run-tests -h
+        - Run: echo "Hello, World!"
+        - Run: echo "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" >> report.xml
+        - Run: echo "<testsuite tests=\"1\" name=\"TestAgentJunit\" >" >> report.xml
+        - Run: echo "<testcase classname=\"TestAgentJunit\" name=\"Dummy
+            Test\"/></testsuite>" >> report.xml
+    Compute:
+      Type: EC2
+    DependsOn:
+      - Build_34
+  DeploywithAWSSAM_e4:
+    # Identifies the action. Do not modify this value.
+    Identifier: codecatalyst-labs/deploy-with-sam@v1.0.1
+    # Required; You can use an environment, AWS account connection, and role to access AWS resources.
+    Environment:
+      Connections:
+        - Role: CodeCatalystPreviewDevelopmentAdministrator-7yhygs
+          Name: "820474522804"
+      Name: prod
+    # Specifies the source and/or artifacts to pass to the action as input.
+    Inputs:
+      # Required
+      Sources:
+        - WorkflowSource # This specifies that the action requires this Workflow as a source
+    Compute:
+      Type: EC2 # Defines the action's properties.
+    Configuration:
+      StackName: test
+      FailOnEmptyChangeset: true
+      Capabilities: CAPABILITY_IAM
+    DependsOn:
+      - Test_83
+  DeployAWSCloudFormationstack_07:
+    # Identifies the action. Do not modify this value.
+    Identifier: aws/cfn-deploy@v1.0.4
+    # Defines the action's properties.
+    Configuration:
+      template: test
+      region: us-west-2
+      name: test
+    Environment:
+      Connections:
+        - Role: CodeCatalystPreviewDevelopmentAdministrator-7yhygs
+          Name: "820474522804"
+      Name: default_environment
+    # Specifies the source and/or artifacts to pass to the action as input.
+    Inputs:
+      # Optional
+      Sources:
+        - WorkflowSource # This specifies that the action requires this Workflow as a source

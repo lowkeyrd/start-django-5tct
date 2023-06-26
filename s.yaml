@@ -11,7 +11,7 @@
 # ------------------------------------
 
 edition: 1.0.0
-name: web-framework-app
+name: web-framework-app1
 access: "{{ access }}"
 
 vars: # 全局变量

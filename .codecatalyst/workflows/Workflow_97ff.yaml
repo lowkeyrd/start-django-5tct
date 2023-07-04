@@ -22,7 +22,7 @@ Actions:
     Outputs:
       # Optional; Automatically discover reports for popular test frameworks
       AutoDiscoverReports:
-        Enabled: true
+        Enabled: false
         # Use as prefix for the report files
         ReportNamePrefix: rpt
 
@@ -104,3 +104,61 @@ Actions:
       # Optional
       Sources:
         - WorkflowSource # This specifies that the action requires this Workflow as a source
+  DeploytoAmazonECS_f0:
+    # Identifies the action. Do not modify this value.
+    Identifier: aws/ecs-deploy@v1.0.3
+
+    # Specifies the source and/or artifacts to pass to the action as input.
+    Inputs:
+      # Optional
+      Sources:
+        - WorkflowSource # This specifies that the action requires this Workflow as a source
+
+    # Required; You can use an environment, AWS account connection, and role to access AWS resources.
+    Environment:
+      Name:
+      Connections:
+        - Name:
+          Role:
+
+            # Defines the action's properties.
+    Configuration:
+      # Required; type: string; description: The name of the ECS services cluster.  Will default to the default cluster
+      cluster:
+
+      # Required; type: string; description: The path to the ECS task definition file to register
+      task-definition:
+
+      # Required; type: string; description: The name of the ECS service to deploy to. The action will only register the task definition if no service is given.
+      service:
+
+      # Required; type: string; description: The AWS region name
+      region:
+
+
+  AWSLambdainvoke_b8:
+    # Identifies the action. Do not modify this value.
+    Identifier: aws/lambda-invoke@v1.0.8
+
+    # Specifies the source and/or artifacts to pass to the action as input.
+    Inputs:
+      # Optional
+      Sources:
+        - WorkflowSource # This specifies that the action requires this Workflow as a source
+
+    # Required; You can use an environment, AWS account connection, and role to access AWS resources.
+    Environment:
+      Name:
+      Connections:
+        - Name:
+          Role:
+
+            # Defines the action's properties.
+    Configuration:
+      # Required; type: string; description: The name or ARN of the AWS Lambda function.
+      Function:
+
+      # Required; type: string; description: AWS Region of the Lambda function
+      AWSRegion:
+
+

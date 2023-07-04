@@ -1,0 +1,11 @@
+Name: Workflow_6cc5
+SchemaVersion: "1.0"
+
+# Optional - Set automatic triggers.
+Triggers:
+  - Type: Push
+    Branches:
+      - prod
+
+# Required - Define action configurations.
+Actions:
